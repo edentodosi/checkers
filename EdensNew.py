@@ -16,7 +16,7 @@ class Board:
         self.master = master
         self.SizeOfCell = (int)(self.BoardPixelSize / self.NumberOfCellsInAxis)
 
-        #init the board
+        # init the board
         self.BoardState = [[Solider for i in range(
             self.NumberOfCellsInAxis)] for j in range(self.NumberOfCellsInAxis)]
 
@@ -37,18 +37,25 @@ class Board:
                 if((i+j) % 2 == 0):
                     if(i < 3):
                         self.BoardState[i][j] = Solider(
-                            self.BoardUi, "black", Position(i, j), False)
+                            self.BoardUi, "black", Position(i, j), False, self.OnSoliderPressed)
                     elif (i > 4):
                         self.BoardState[i][j] = Solider(
-                            self.BoardUi, "white", Position(i, j), False)
+                            self.BoardUi, "white", Position(i, j), False, self.OnSoliderPressed)
                     else:
                         self.BoardState[i][j] = None
                 else:
                     self.BoardState[i][j] = None
-        
-        self.playerTurn="white"
+
+        self.playerTurn = "white"
         self.whitePlayersCount = 13
         self.blackPlayersCount = 13
+
+    def OnSoliderPressed(self, position):
+        if(self.playerTurn == self.BoardState[position.Row][position.Column].Color):
+            print("this is an ok press")
+        else:
+            print("Error - invalid press")
+
 
 root = Tk()
 root.configure(background='white')

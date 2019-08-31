@@ -17,3 +17,7 @@ class Solider:
         self.soliderButton = Button(
             self.master, image=self.photo, background="#EBC595", command=lambda: onClick(self.position))
         self.soliderButton.grid(row=position.Row, column=position.Column)
+
+    @property
+    def Color(self):
+        return self.color
