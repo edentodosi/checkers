@@ -48,7 +48,7 @@ class GameBoardUi:
         # main frame set
         soliderSize = (int)(((size / board.BoardSize) * 0.85))
         self.ResizeImagesToMatchScreenSize(size, board.BoardSize, soliderSize)
-        self.boardPhoto = PhotoImage(file="Assets/board.png")
+        self.boardPhoto = PhotoImage(file="Assets/board.gif")
         label = Label(master, image=self.boardPhoto,
                       width=size, height=size)
         label.pack()
@@ -237,7 +237,7 @@ class CheckersSoliderUi:
         if(checkersSolider is None):
             return
 
-        extension = "_solider_king.png" if checkersSolider.isKing else "_solider.png"
+        extension = "_solider_king.gif" if checkersSolider.isKing else "_solider.gif"
         fileName = checkersSolider.soliderColor + extension
 
         self.soliderImage = PhotoImage(file="Assets/" + fileName)
