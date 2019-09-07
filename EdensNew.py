@@ -1,4 +1,4 @@
-from Tkinter import *
+from Tkinter import Tk,Label,Frame, PhotoImage
 from Solider import Solider
 from Position import Position
 from AdvanceOption import AdvanceOption
@@ -70,49 +70,72 @@ class Board:
             self.UiAdvancedOptions.append(AdvanceOption(self.BoardUi, newPosition, self.OnPositionOptionPress))
 
     def GetAdvancedPositionsForSolider(self, solider):
-        direction=1
-        if(solider.Color=="white"):
-            direction=-1
         advancedPositions=[]
-        #if we cant eat
-        if(solider.Position.Column==0):
-            if(self.BoardState[solider.Position.Row+direction][solider.Position.Column+1]==None):
-                advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column+1))
-            elif(solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column+1].Color):
-                advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column+2))
-        elif(solider.Position.Column==7):
-            if(self.BoardState[solider.Position.Row+direction][solider.Position.Column-1]==None):
-                advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column-1))
-            elif(solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column-1].Color):
-                advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column-2))
-        elif(self.BoardState[solider.Position.Row+direction][solider.Position.Column-1]==None):
-            advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column-1))
-            if(self.BoardState[solider.Position.Row+direction][solider.Position.Column+1]==None):
-                advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column+1))
-        #if we can eat
-        elif (solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column-1].Color):
-            advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column-2))
-        elif (solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column+1].Color):
-            advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column+2))
-       
-        return advancedPositions
+        if(solider.Color == "white" or solider.IsKing):
+            rightOption = self.GetAdvancePositionForSpecificDirection(solider, -1, 1)
+            if(rightOption is not None):
+                advancedPositions.append(rightOption)
+            leftOption = self.GetAdvancePositionForSpecificDirection(solider, -1, -1)
+            if(leftOption is not None):
+                advancedPositions.append(leftOption)
         
+        if(solider.Color == "black" or solider.IsKing):
+            rightOption = self.GetAdvancePositionForSpecificDirection(solider, 1, 1)
+            if(rightOption is not None):
+                advancedPositions.append(rightOption)
+            leftOption = self.GetAdvancePositionForSpecificDirection(solider, 1, -1)
+            if(leftOption is not None):
+                advancedPositions.append(leftOption)
+
+        return advancedPositions
+    
+    def GetAdvancePositionForSpecificDirection(self,solider, verticalDirection, horizontalDirection):
+        try:
+            if(self.BoardState[solider.Position.Row+verticalDirection][solider.Position.Column+horizontalDirection]== None):
+                return Position(solider.Position.Row+verticalDirection,solider.Position.Column+horizontalDirection)
+
+            elif (solider.color!=self.BoardState[solider.Position.Row+verticalDirection][solider.Position.Column+horizontalDirection].Color):
+                if(self.BoardState[solider.Position.Row+verticalDirection*2][solider.Position.Column+2*horizontalDirection] == None):
+                    return Position(solider.Position.Row+verticalDirection*2,solider.Position.Column+2*horizontalDirection)
+        except IndexError:
+            return None
+
     def OnPositionOptionPress(self,position):
+        for option in self.UiAdvancedOptions:
+            option.delete()
+
         previousPosition=self.lastSoliderClicked.Position
         self.BoardState[position.Row][position.Column] = self.lastSoliderClicked
         self.BoardState[previousPosition.Row][previousPosition.Column]= None
         self.lastSoliderClicked.UpdatePosition(position)
         
-        for option in self.UiAdvancedOptions:
-            option.delete()
+        #make someone a king 
+        if self.lastSoliderClicked.color=="black" and self.lastSoliderClicked.Position.Row==7:
+            self.lastSoliderClicked.MakeAKing()
         
+        if self.lastSoliderClicked.color=="white" and self.lastSoliderClicked.Position.Row==0:
+            self.lastSoliderClicked.MakeAKing()
+        
+        #if we ate a solider
+        if(abs(previousPosition.Row - position.Row) == 2):
+            middlePosition = Position((previousPosition.Row + position.Row)/2,(previousPosition.Column + position.Column)/2)
+            self.BoardState[middlePosition.Row][middlePosition.Column].Delete()
+            self.BoardState[middlePosition.Row][middlePosition.Column] = None
+            if self.playerTurn == "white":
+                self.blackPlayersCount -=1
+            else :
+                self.whitePlayersCount -=1
+
         self.playerTurn = "black" if self.playerTurn == "white" else "white"
 
-
-    
 
 root = Tk()
 root.configure(background='white')
 root.geometry("600x600")
 boarda = Board(root)
 root.mainloop()
+#TODO:
+
+#if we change someone to king - change the image of the solider
+#after eat - can we eat again?
+#check if won - (number of soliders is 0 ?  ) after each move

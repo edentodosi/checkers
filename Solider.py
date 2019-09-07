@@ -21,6 +21,17 @@ class Solider:
     def UpdatePosition(self,position):
         self.position = position
         self.soliderButton.grid(row=position.Row, column=position.Column)
+    
+    def MakeAKing(self):
+        self.isKing=True
+
+    def Delete(self):
+        self.photo.__del__()
+        self.soliderButton.destroy()
+
+    @property 
+    def IsKing(self):
+        return self.isKing
 
     @property
     def Color(self):
