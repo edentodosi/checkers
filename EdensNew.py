@@ -57,20 +57,43 @@ class Board:
 
         self.lastSoliderClicked=solider
         advancedPositions=self.GetAdvancedPositionsForSolider(solider)
-        self.UiOptions=AdvanceOption(self.BoardUi,advancedPositions)
+        self.UiOptions=AdvanceOption(self.BoardUi,advancedPositions, self.OnPositionOptionPress)
 
     def GetAdvancedPositionsForSolider(self, solider):
         direction=1
         if(solider.Color=="white"):
             direction=-1
         advancedPositions=[]
-        if(self.BoardState[solider.Position.Row+direction][solider.Position.Column-1]==None):
+        #if we cant eat
+        if(solider.Position.Column==0):
+            if(self.BoardState[solider.Position.Row+direction][solider.Position.Column+1]==None):
+                advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column+1))
+            elif(solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column+1].Color):
+                advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column+2))
+        elif(solider.Position.Column==7):
+            if(self.BoardState[solider.Position.Row+direction][solider.Position.Column-1]==None):
+                advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column-1))
+            elif(solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column-1].Color):
+                advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column-2))
+        elif(self.BoardState[solider.Position.Row+direction][solider.Position.Column-1]==None):
             advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column-1))
-        if(self.BoardState[solider.Position.Row+direction][solider.Position.Column+1]==None):
-            advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column+1))
-        
+            if(self.BoardState[solider.Position.Row+direction][solider.Position.Column+1]==None):
+                advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column+1))
+        #if we can eat
+        elif (solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column-1].Color):
+            advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column-2))
+        elif (solider.color!=self.BoardState[solider.Position.Row+direction][solider.Position.Column+1].Color):
+            advancedPositions.append(Position(solider.Position.Row+direction*2,solider.Position.Column+2))
+       
         return advancedPositions
         
+    def OnPositionOptionPress(self,position):
+        previousPosition=self.lastSoliderClicked.Position
+        self.BoardState[position.Row][position.Column] = self.lastSoliderClicked
+        self.BoardState[previousPosition.Row][previousPosition.Column]=None
+        self.UiOptions.delete()
+        
+
 
     
 
