@@ -22,14 +22,21 @@ class Board:
             self.NumberOfCellsInAxis)] for j in range(self.NumberOfCellsInAxis)]
 
         self.boardPhoto = PhotoImage(file="Assets/board.gif")
-        self.BoardUi = Label(master, image=self.boardPhoto,
-                             width=self.BoardPixelSize, height=self.BoardPixelSize)
+        self.BoardUi = Frame(self.master)
         self.BoardUi.pack()
-
+        self.whiteBg = PhotoImage(file="Assets/whitebg.gif")
+        self.blackBg = PhotoImage(file="Assets/blackbg.gif")
+        self.background = []
         for i in range(self.NumberOfCellsInAxis):
-            self.BoardUi.columnconfigure(i, minsize=self.SizeOfCell)
-            self.BoardUi.rowconfigure(i, minsize=self.SizeOfCell)
-
+            for j in range(self.NumberOfCellsInAxis):
+                if((i+j) % 2 == 0):
+                    whiteBg = Label(self.BoardUi, image=self.whiteBg, borderwidth=0)
+                    whiteBg.grid(row=i, column=j)
+                    self.background.append(whiteBg)
+                else:
+                    blackBg = Label(self.BoardUi, image=self.blackBg, borderwidth=0)
+                    blackBg.grid(row=i, column=j)
+                    self.background.append(blackBg)
         self.ResetGame()
 
     def ResetGame(self):
@@ -92,7 +99,7 @@ class Board:
         self.BoardState[position.Row][position.Column] = self.lastSoliderClicked
         self.BoardState[previousPosition.Row][previousPosition.Column]=None
         self.UiOptions.delete()
-        
+
 
 
     

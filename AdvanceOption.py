@@ -8,7 +8,7 @@ class AdvanceOption:
         self.photo = PhotoImage(file="Assets/circle.gif")
         self.uiOptions = []
         for positionOption in advancedPositions:
-            newUiOption = Button(self.master, image=self.photo, background="#EBC595", command=lambda: onClick(positionOption))
+            newUiOption = Button(self.master, image=self.photo, background="white", command=lambda: onClick(positionOption))
             newUiOption.grid(row=positionOption.Row, column=positionOption.Column)
             self.uiOptions.append(newUiOption)
 

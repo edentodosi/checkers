@@ -15,7 +15,7 @@ class Solider:
         pathToFile = pathToFile + ".gif"
         self.photo = PhotoImage(file=pathToFile)
         self.soliderButton = Button(
-            self.master, image=self.photo, background="#EBC595", command=lambda: onClick(self))
+            self.master, image=self.photo, background="white", command=lambda: onClick(self))
         self.soliderButton.grid(row=position.Row, column=position.Column)
 
     @property
