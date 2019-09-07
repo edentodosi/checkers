@@ -1,6 +1,7 @@
 from Tkinter import *
 from Solider import Solider
 from Position import Position
+from AdvanceOption import AdvanceOption
 # https://python-textbok.readthedocs.io/en/1.0/Introduction_to_GUI_Programming.html
 #from PIL import Image
 
@@ -20,7 +21,7 @@ class Board:
         self.BoardState = [[Solider for i in range(
             self.NumberOfCellsInAxis)] for j in range(self.NumberOfCellsInAxis)]
 
-        self.boardPhoto = PhotoImage(file="Assets/board.png")
+        self.boardPhoto = PhotoImage(file="Assets/board.gif")
         self.BoardUi = Label(master, image=self.boardPhoto,
                              width=self.BoardPixelSize, height=self.BoardPixelSize)
         self.BoardUi.pack()
@@ -47,15 +48,32 @@ class Board:
                     self.BoardState[i][j] = None
 
         self.playerTurn = "white"
-        self.whitePlayersCount = 13
-        self.blackPlayersCount = 13
+        self.whitePlayersCount = 12
+        self.blackPlayersCount = 12
 
-    def OnSoliderPressed(self, position):
-        if(self.playerTurn == self.BoardState[position.Row][position.Column].Color):
-            print("this is an ok press")
-        else:
-            print("Error - invalid press")
+    def OnSoliderPressed(self, solider):
+        if(self.playerTurn != solider.Color):
+            return
 
+        self.lastSoliderClicked=solider
+        advancedPositions=self.GetAdvancedPositionsForSolider(solider)
+        self.UiOptions=AdvanceOption(self.BoardUi,advancedPositions)
+
+
+    def GetAdvancedPositionsForSolider(self, solider):
+        direction=1
+        if(solider.Color=="white"):
+            direction=-1
+        advancedPositions=[]
+        if(self.BoardState[solider.Row+direction][solider.Column-1]==None):
+            advancedPositions.append(Position(solider.row+direction,solider.column-1))
+        if(self.BoardState[solider.Row+direction][solider.Column+1]==None):
+            advancedPositions.append(Position(solider.row+direction,solider.column+1))
+        
+        return advancedPositions
+        
+
+    
 
 root = Tk()
 root.configure(background='white')

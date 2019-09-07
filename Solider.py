@@ -12,10 +12,10 @@ class Solider:
         pathToFile = "Assets/" + color + "_solider"
         if(self.isKing):
             pathToFile = pathToFile + "_king"
-        pathToFile = pathToFile + ".png"
+        pathToFile = pathToFile + ".gif"
         self.photo = PhotoImage(file=pathToFile)
         self.soliderButton = Button(
-            self.master, image=self.photo, background="#EBC595", command=lambda: onClick(self.position))
+            self.master, image=self.photo, background="#EBC595", command=lambda: onClick(self))
         self.soliderButton.grid(row=position.Row, column=position.Column)
 
     @property
