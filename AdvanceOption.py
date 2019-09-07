@@ -2,16 +2,12 @@ from Position import Position
 from Tkinter import PhotoImage, Button
 
 class AdvanceOption:
-    def __init__(self,master,advancedPositions,onClick):
+    def __init__(self,master,position,onClick):
         self.master=master
-        self.advancedPositions=advancedPositions
+        self.position = position
         self.photo = PhotoImage(file="Assets/circle.gif")
-        self.uiOptions = []
-        for positionOption in advancedPositions:
-            newUiOption = Button(self.master, image=self.photo, background="white", command=lambda: onClick(positionOption))
-            newUiOption.grid(row=positionOption.Row, column=positionOption.Column)
-            self.uiOptions.append(newUiOption)
+        self.UiOption = Button(self.master, image=self.photo, background="white", command=lambda: onClick(position))
+        self.UiOption.grid(row=position.Row, column=position.Column)
 
     def delete(self):
-        for positionOption in self.uiOptions:
-            positionOption.destroy()
+        self.UiOption.destroy()

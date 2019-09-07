@@ -16,12 +16,11 @@ class Board:
         self.NumberOfCellsInAxis = 8
         self.master = master
         self.SizeOfCell = (int)(self.BoardPixelSize / self.NumberOfCellsInAxis)
-
+        self.UiAdvancedOptions = []
         # init the board
         self.BoardState = [[Solider for i in range(
             self.NumberOfCellsInAxis)] for j in range(self.NumberOfCellsInAxis)]
 
-        self.boardPhoto = PhotoImage(file="Assets/board.gif")
         self.BoardUi = Frame(self.master)
         self.BoardUi.pack()
         self.whiteBg = PhotoImage(file="Assets/whitebg.gif")
@@ -62,9 +61,13 @@ class Board:
         if(self.playerTurn != solider.Color):
             return
 
+        for option in self.UiAdvancedOptions:
+            option.delete()
+
         self.lastSoliderClicked=solider
         advancedPositions=self.GetAdvancedPositionsForSolider(solider)
-        self.UiOptions=AdvanceOption(self.BoardUi,advancedPositions, self.OnPositionOptionPress)
+        for newPosition in advancedPositions:
+            self.UiAdvancedOptions.append(AdvanceOption(self.BoardUi, newPosition, self.OnPositionOptionPress))
 
     def GetAdvancedPositionsForSolider(self, solider):
         direction=1
@@ -97,9 +100,13 @@ class Board:
     def OnPositionOptionPress(self,position):
         previousPosition=self.lastSoliderClicked.Position
         self.BoardState[position.Row][position.Column] = self.lastSoliderClicked
-        self.BoardState[previousPosition.Row][previousPosition.Column]=None
-        self.UiOptions.delete()
-
+        self.BoardState[previousPosition.Row][previousPosition.Column]= None
+        self.lastSoliderClicked.UpdatePosition(position)
+        
+        for option in self.UiAdvancedOptions:
+            option.delete()
+        
+        self.playerTurn = "black" if self.playerTurn == "white" else "white"
 
 
     

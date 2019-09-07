@@ -18,6 +18,10 @@ class Solider:
             self.master, image=self.photo, background="white", command=lambda: onClick(self))
         self.soliderButton.grid(row=position.Row, column=position.Column)
 
+    def UpdatePosition(self,position):
+        self.position = position
+        self.soliderButton.grid(row=position.Row, column=position.Column)
+
     @property
     def Color(self):
         return self.color
