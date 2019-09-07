@@ -125,6 +125,11 @@ class Board:
                 self.blackPlayersCount -=1
             else :
                 self.whitePlayersCount -=1
+            advancedOptions = self.GetAdvancedPositionsForSolider(self.lastSoliderClicked)
+            for option in advancedOptions:
+                if(abs(option.Row - self.lastSoliderClicked.Position.Row) == 2):
+                    self.OnSoliderPressed(self.lastSoliderClicked)
+                    return
 
         self.playerTurn = "black" if self.playerTurn == "white" else "white"
 
@@ -140,3 +145,4 @@ root.mainloop()
 # if didnt eat while it can - shouled we remove the one couled eat ?  - or do not allow not eating 
 # if someone cant move anymore ? 
 # menu that contains player turn, count of soliders, and restart button
+# fix the negative index on array
