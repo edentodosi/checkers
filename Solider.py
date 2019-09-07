@@ -8,22 +8,27 @@ class Solider:
         self.isKing = isKing
         self.position = position
         self.master = master
+        self.onClick = onClick
+        self.DrawImage()
 
-        pathToFile = "Assets/" + color + "_solider"
+    def DrawImage(self):
+        pathToFile = "Assets/" + self.color + "_solider"
         if(self.isKing):
             pathToFile = pathToFile + "_king"
         pathToFile = pathToFile + ".gif"
         self.photo = PhotoImage(file=pathToFile)
         self.soliderButton = Button(
-            self.master, image=self.photo, background="white", command=lambda: onClick(self))
-        self.soliderButton.grid(row=position.Row, column=position.Column)
+            self.master, image=self.photo, background="white", command=lambda: self.onClick(self))
+        self.soliderButton.grid(row=self.position.Row, column=self.position.Column)
 
     def UpdatePosition(self,position):
         self.position = position
         self.soliderButton.grid(row=position.Row, column=position.Column)
-    
+
     def MakeAKing(self):
         self.isKing=True
+        self.Delete()
+        self.DrawImage()
 
     def Delete(self):
         self.photo.__del__()

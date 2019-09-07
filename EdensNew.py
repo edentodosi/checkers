@@ -135,7 +135,8 @@ root.geometry("600x600")
 boarda = Board(root)
 root.mainloop()
 #TODO:
-
-#if we change someone to king - change the image of the solider
-#after eat - can we eat again?
-#check if won - (number of soliders is 0 ?  ) after each move
+# after eat - can we eat again?
+# check if won - (number of soliders is 0 ?  ) after each move
+# if didnt eat while it can - shouled we remove the one couled eat ?  - or do not allow not eating 
+# if someone cant move anymore ? 
+# menu that contains player turn, count of soliders, and restart button
