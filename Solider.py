@@ -21,3 +21,7 @@ class Solider:
     @property
     def Color(self):
         return self.color
+    
+    @property
+    def Position(self):
+        return self.position

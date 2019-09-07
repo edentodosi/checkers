@@ -59,16 +59,15 @@ class Board:
         advancedPositions=self.GetAdvancedPositionsForSolider(solider)
         self.UiOptions=AdvanceOption(self.BoardUi,advancedPositions)
 
-
     def GetAdvancedPositionsForSolider(self, solider):
         direction=1
         if(solider.Color=="white"):
             direction=-1
         advancedPositions=[]
-        if(self.BoardState[solider.Row+direction][solider.Column-1]==None):
-            advancedPositions.append(Position(solider.row+direction,solider.column-1))
-        if(self.BoardState[solider.Row+direction][solider.Column+1]==None):
-            advancedPositions.append(Position(solider.row+direction,solider.column+1))
+        if(self.BoardState[solider.Position.Row+direction][solider.Position.Column-1]==None):
+            advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column-1))
+        if(self.BoardState[solider.Position.Row+direction][solider.Position.Column+1]==None):
+            advancedPositions.append(Position(solider.Position.Row+direction,solider.Position.Column+1))
         
         return advancedPositions
         
