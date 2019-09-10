@@ -1,7 +1,9 @@
-from Tkinter import Tk,Label,Frame, PhotoImage
+from Tkinter import Tk,Label,Frame, PhotoImage,Button
 from Solider import Solider
 from Position import Position
 from AdvanceOption import AdvanceOption
+import tkMessageBox
+#https://www.tocode.co.il/blog/2015-07-tkinter-intro
 # https://python-textbok.readthedocs.io/en/1.0/Introduction_to_GUI_Programming.html
 #from PIL import Image
 
@@ -12,6 +14,11 @@ from AdvanceOption import AdvanceOption
 # class Position:
 class Board:
     def __init__(self, master):
+        master.title("Checkers Game - Eden Todosi")
+        #current_turn_text = "{}{}".format(self.playerTurn, "\'s Turn!")
+        #self._turn_indicator_label.config(text = current_turn_text)
+        reset = Button(master, text = "Reset Game", command =self.ResetGame, height=2, width=15)
+        reset.pack()
         self.BoardPixelSize = 600
         self.NumberOfCellsInAxis = 8
         self.master = master
@@ -136,7 +143,7 @@ class Board:
 
 root = Tk()
 root.configure(background='white')
-root.geometry("600x600")
+root.geometry("700x700")
 boarda = Board(root)
 root.mainloop()
 #TODO:
