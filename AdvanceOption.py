@@ -9,5 +9,5 @@ class AdvanceOption:
         self.UiOption = Button(self.master, image=self.photo, background="white", command=lambda: onClick(position))
         self.UiOption.grid(row=position.Row, column=position.Column)
 
-    def delete(self):
+    def Delete(self):
         self.UiOption.destroy()
