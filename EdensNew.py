@@ -141,6 +141,18 @@ class Board:
         except IndexError:
             return None
 
+    def CheckIfNotMovesLeft(self):
+        for i in range(self.NumberOfCellsInAxis):
+            for j in range(self.NumberOfCellsInAxis):
+                if(self.BoardState[i][j] is not None):
+                    if(self.BoardState[i][j].Color== self.playerTurn):
+                        advancedOptions = self.GetAdvancedPositionsForSolider(
+                            self.BoardState[i][j])
+                        if(len(advancedOptions)!=0):
+                            return False
+        return True
+
+
     def OnPositionOptionPress(self, position):
         for option in self.UiAdvancedOptions:
             option.Delete()
@@ -177,9 +189,12 @@ class Board:
                     self.InAMiddleOfEating=True
                     self.OnSoliderPressed(self.lastSoliderClicked)
                     return
-
+      
         self.playerTurn = "black" if self.playerTurn == "white" else "white"
         self.InAMiddleOfEating=False
+      
+        if(self.CheckIfNotMovesLeft()):
+            self.Winning("black" if self.playerTurn == "white" else "white")
         self.gameMenu.UpdatePlayerTurn(self.playerTurn)
 
     def DecrementCounter(self,color):
@@ -196,23 +211,23 @@ class Board:
    
     def Winning(self,color):
         self.someoneWin=True
-        window = Toplevel(self.master)
+        window = Toplevel(self.master, background="#f0e5df")
         window.attributes('-topmost', True)
         window.title("we have a winner!")
         window.geometry("300x200")
 
-        message=Label(window, text="The winner is \n" + str(color))
-        message.pack()
+        message=Label(window, text="The winner is \n" + str(color), background="#f0e5df",font=("Courier", 20))
+        message.place(x=150, y= 80, anchor="center")
 
-        self.resetButton = Button(window, text="Reset Game",command=lambda : 
+        resetButton = Button(window, text="Reset Game",command=lambda : 
         (
          (self.ResetGame())
         ,(window.destroy()),
         (self.master.attributes('-topmost', True))
         ),
          height=2, width=15)
-        self.resetButton.pack(side="bottom")
 
+        resetButton.place(x=150, y= 160, anchor="center")
         center(window)
 
 
