@@ -4,9 +4,6 @@ from Position import Position
 from AdvanceOption import AdvanceOption
 from GameMenu import GameMenu
 import tkMessageBox
-# https://www.tocode.co.il/blog/2015-07-tkinter-intro
-# https://python-textbok.readthedocs.io/en/1.0/Introduction_to_GUI_Programming.html
-#from PIL import Image
 
 class Board:
     def __init__(self, master):
@@ -22,11 +19,8 @@ class Board:
 
         self.gameMenu = GameMenu(master, "",0,0, self.ResetGame)
 
-        borderImage = PhotoImage(file= "Assets/borderboard.gif")
-        self.border = Label(self.master,image=borderImage)
-        self.border.pack()
-        self.BoardUi = Frame(self.border)
-        self.BoardUi.place(x=1, y=1)
+        self.BoardUi = Frame(self.master,borderwidth=2, background="#080808")
+        self.BoardUi.pack()
         self.DrawBackgroundBoard()
 
         # init the board
@@ -231,7 +225,7 @@ def center(win):
     win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
 root = Tk()
-root.configure(background='white')
+root.configure(background='#f0e5df')
 root.geometry("700x700")
 boarda = Board(root)
 center(root)

@@ -1,7 +1,6 @@
 from Position import Position
 from Tkinter import PhotoImage, Button
 
-
 class Solider:
     def __init__(self, master, color, position, isKing, onClick):
         self.color = color
