@@ -1,4 +1,4 @@
-from Tkinter import Tk, Label, Frame, PhotoImage, Button
+from Tkinter import Tk, Label, Frame, PhotoImage, Button, Toplevel
 from Solider import Solider
 from Position import Position
 from AdvanceOption import AdvanceOption
@@ -33,6 +33,7 @@ class Board:
 
         self.DrawBackgroundBoard()
         self.ResetGame()
+
 
     def DrawBackgroundBoard(self):
         self.background = []
@@ -185,16 +186,48 @@ class Board:
         if( color == "white"):
             self.whitePlayersCount -=1
             self.gameMenu.UpdateWhiteSoliderCounter(self.whitePlayersCount)
+            if(self.whitePlayersCount==0):
+                self.Winning("black")
         elif (color =="black"):
             self.blackPlayersCount -=1
             self.gameMenu.UpdateBlackSoliderCounter(self.blackPlayersCount)
+            if(self.blackPlayersCount==0):
+                self.Winning("white")
+   
+    def Winning(self,color):
+        self.winner=color
+        window = Toplevel(self.master)
+        window.attributes('-topmost', True)
+        window.title("we have a winner!")
+        self.message=Label(window, text="The winner is " + str(color))
+        self.resetButton = Button(window, text="Reset Game",command=lambda : 
+        (
+         (self.ResetGame())
+        ,(window.destroy()),
+        (self.master.attributes('-topmost', True))
+        ),
+         height=2, width=15)
+        self.resetButton.pack()
+
+        center(window)
 
 
+
+
+
+def center(win):
+    win.update_idletasks()
+    width = win.winfo_width()
+    height = win.winfo_height()
+    x = (win.winfo_screenwidth() // 2) - (width // 2)
+    y = (win.winfo_screenheight() // 2) - (height // 2)
+    win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
 root = Tk()
 root.configure(background='white')
 root.geometry("700x700")
 boarda = Board(root)
+center(root)
 root.mainloop()
 # TODO:
 # check if won - (number of soliders is 0 ?  ) after each move
