@@ -2,6 +2,7 @@ from Tkinter import Tk, Label, Frame, PhotoImage, Button
 from Solider import Solider
 from Position import Position
 from AdvanceOption import AdvanceOption
+from GameMenu import GameMenu
 import tkMessageBox
 # https://www.tocode.co.il/blog/2015-07-tkinter-intro
 # https://python-textbok.readthedocs.io/en/1.0/Introduction_to_GUI_Programming.html
@@ -10,17 +11,15 @@ import tkMessageBox
 class Board:
     def __init__(self, master):
         master.title("Checkers Game - Eden Todosi")
-        #current_turn_text = "{}{}".format(self.playerTurn, "\'s Turn!")
-        #self._turn_indicator_label.config(text = current_turn_text)
-        reset = Button(master, text="Reset Game",
-                       command=self.ResetGame, height=2, width=15)
-        reset.pack()
-
         self.BoardPixelSize = 600
         self.NumberOfCellsInAxis = 8
         self.master = master
         self.SizeOfCell = (int)(self.BoardPixelSize / self.NumberOfCellsInAxis)
         self.UiAdvancedOptions = []
+        self.lastSoliderClicked = None
+        self.InAMiddleOfEating=False
+
+        self.gameMenu = GameMenu(master, "",0,0, self.ResetGame)
 
         # init the board
         self.BoardState = [[None for i in range(
@@ -28,6 +27,9 @@ class Board:
 
         self.BoardUi = Frame(self.master)
         self.BoardUi.pack()
+        # borderImage = PhotoImage(file= "Assets/borderboard.gif")
+        # self.border = Label(self.BoardUi,image=borderImage)
+        # self.border.pack()
 
         self.DrawBackgroundBoard()
         self.ResetGame()
@@ -51,6 +53,11 @@ class Board:
                     self.background.append(blackBg)
 
     def ResetGame(self):
+        for option in self.UiAdvancedOptions:
+            option.Delete()
+        self.UiAdvancedOptions = []
+        self.InAMiddleOfEating=False
+
         for i in range(self.NumberOfCellsInAxis):
             for j in range(self.NumberOfCellsInAxis):
                 if(self.BoardState[i][j] is not None):
@@ -72,12 +79,20 @@ class Board:
         self.whitePlayersCount = 12
         self.blackPlayersCount = 12
 
+        self.gameMenu.UpdateBlackSoliderCounter(self.blackPlayersCount)
+        self.gameMenu.UpdateWhiteSoliderCounter(self.whitePlayersCount)
+        self.gameMenu.UpdatePlayerTurn(self.playerTurn)
+
     def OnSoliderPressed(self, solider):
         if(self.playerTurn != solider.Color):
             return
+        if (self.InAMiddleOfEating):
+            if(solider != self.lastSoliderClicked):
+                return
 
         for option in self.UiAdvancedOptions:
             option.Delete()
+        self.UiAdvancedOptions = []
 
         self.lastSoliderClicked = solider
         advancedPositions = self.GetAdvancedPositionsForSolider(solider)
@@ -111,10 +126,15 @@ class Board:
 
     def GetAdvancePositionForSpecificDirection(self, solider, verticalDirection, horizontalDirection):
         try:
+            if(solider.Position.Row+verticalDirection < 0 or solider.Position.Column+horizontalDirection < 0):
+                return None
             if(self.BoardState[solider.Position.Row+verticalDirection][solider.Position.Column+horizontalDirection] == None):
                 return Position(solider.Position.Row+verticalDirection, solider.Position.Column+horizontalDirection)
+            
+            if(solider.Position.Row+2*verticalDirection < 0 or solider.Position.Column+2*horizontalDirection < 0):
+                return None
 
-            elif (solider.color != self.BoardState[solider.Position.Row+verticalDirection][solider.Position.Column+horizontalDirection].Color):
+            if(solider.color != self.BoardState[solider.Position.Row+verticalDirection][solider.Position.Column+horizontalDirection].Color):
                 if(self.BoardState[solider.Position.Row+verticalDirection*2][solider.Position.Column+2*horizontalDirection] == None):
                     return Position(solider.Position.Row+verticalDirection*2, solider.Position.Column+2*horizontalDirection)
         except IndexError:
@@ -123,6 +143,7 @@ class Board:
     def OnPositionOptionPress(self, position):
         for option in self.UiAdvancedOptions:
             option.Delete()
+        self.UiAdvancedOptions = []
 
         previousPosition = self.lastSoliderClicked.Position
         self.BoardState[position.Row][position.Column] = self.lastSoliderClicked
@@ -143,17 +164,31 @@ class Board:
             self.BoardState[middlePosition.Row][middlePosition.Column].Delete()
             self.BoardState[middlePosition.Row][middlePosition.Column] = None
             if self.playerTurn == "white":
-                self.blackPlayersCount -= 1
+                self.DecrementCounter("black")
             else:
-                self.whitePlayersCount -= 1
+                self.DecrementCounter("white")
+
             advancedOptions = self.GetAdvancedPositionsForSolider(
                 self.lastSoliderClicked)
             for option in advancedOptions:
+                # can we eat again ?
                 if(abs(option.Row - self.lastSoliderClicked.Position.Row) == 2):
+                    self.InAMiddleOfEating=True
                     self.OnSoliderPressed(self.lastSoliderClicked)
                     return
 
         self.playerTurn = "black" if self.playerTurn == "white" else "white"
+        self.InAMiddleOfEating=False
+        self.gameMenu.UpdatePlayerTurn(self.playerTurn)
+
+    def DecrementCounter(self,color):
+        if( color == "white"):
+            self.whitePlayersCount -=1
+            self.gameMenu.UpdateWhiteSoliderCounter(self.whitePlayersCount)
+        elif (color =="black"):
+            self.blackPlayersCount -=1
+            self.gameMenu.UpdateBlackSoliderCounter(self.blackPlayersCount)
+
 
 
 root = Tk()
@@ -162,9 +197,6 @@ root.geometry("700x700")
 boarda = Board(root)
 root.mainloop()
 # TODO:
-# after eat - can we eat again?
 # check if won - (number of soliders is 0 ?  ) after each move
 # if didnt eat while it can - shouled we remove the one couled eat ?  - or do not allow not eating
 # if someone cant move anymore ?
-# menu that contains player turn, count of soliders, and restart button
-# fix the negative index on array
