@@ -18,22 +18,21 @@ class Board:
         self.UiAdvancedOptions = []
         self.lastSoliderClicked = None
         self.InAMiddleOfEating=False
+        self.someoneWin=False
 
         self.gameMenu = GameMenu(master, "",0,0, self.ResetGame)
+
+        borderImage = PhotoImage(file= "Assets/borderboard.gif")
+        self.border = Label(self.master,image=borderImage)
+        self.border.pack()
+        self.BoardUi = Frame(self.border)
+        self.BoardUi.place(x=1, y=1)
+        self.DrawBackgroundBoard()
 
         # init the board
         self.BoardState = [[None for i in range(
             self.NumberOfCellsInAxis)] for j in range(self.NumberOfCellsInAxis)]
-
-        self.BoardUi = Frame(self.master)
-        self.BoardUi.pack()
-        # borderImage = PhotoImage(file= "Assets/borderboard.gif")
-        # self.border = Label(self.BoardUi,image=borderImage)
-        # self.border.pack()
-
-        self.DrawBackgroundBoard()
         self.ResetGame()
-
 
     def DrawBackgroundBoard(self):
         self.background = []
@@ -58,6 +57,7 @@ class Board:
             option.Delete()
         self.UiAdvancedOptions = []
         self.InAMiddleOfEating=False
+        self.someoneWin=False
 
         for i in range(self.NumberOfCellsInAxis):
             for j in range(self.NumberOfCellsInAxis):
@@ -90,6 +90,8 @@ class Board:
         if (self.InAMiddleOfEating):
             if(solider != self.lastSoliderClicked):
                 return
+        if(self.someoneWin):
+            return
 
         for option in self.UiAdvancedOptions:
             option.Delete()
@@ -97,9 +99,13 @@ class Board:
 
         self.lastSoliderClicked = solider
         advancedPositions = self.GetAdvancedPositionsForSolider(solider)
+        
         for newPosition in advancedPositions:
-            self.UiAdvancedOptions.append(AdvanceOption(
-                self.BoardUi, newPosition, self.OnPositionOptionPress))
+            if(self.InAMiddleOfEating):
+                if(abs(newPosition.Row - self.lastSoliderClicked.Position.Row) == 2):
+                    self.UiAdvancedOptions.append(AdvanceOption(self.BoardUi, newPosition, self.OnPositionOptionPress))
+            else:
+                self.UiAdvancedOptions.append(AdvanceOption(self.BoardUi, newPosition, self.OnPositionOptionPress))
 
     def GetAdvancedPositionsForSolider(self, solider):
         advancedPositions = []
@@ -195,11 +201,15 @@ class Board:
                 self.Winning("white")
    
     def Winning(self,color):
-        self.winner=color
+        self.someoneWin=True
         window = Toplevel(self.master)
         window.attributes('-topmost', True)
         window.title("we have a winner!")
-        self.message=Label(window, text="The winner is " + str(color))
+        window.geometry("300x200")
+
+        message=Label(window, text="The winner is \n" + str(color))
+        message.pack()
+
         self.resetButton = Button(window, text="Reset Game",command=lambda : 
         (
          (self.ResetGame())
@@ -207,12 +217,9 @@ class Board:
         (self.master.attributes('-topmost', True))
         ),
          height=2, width=15)
-        self.resetButton.pack()
+        self.resetButton.pack(side="bottom")
 
         center(window)
-
-
-
 
 
 def center(win):
@@ -230,6 +237,5 @@ boarda = Board(root)
 center(root)
 root.mainloop()
 # TODO:
-# check if won - (number of soliders is 0 ?  ) after each move
 # if didnt eat while it can - shouled we remove the one couled eat ?  - or do not allow not eating
 # if someone cant move anymore ?
