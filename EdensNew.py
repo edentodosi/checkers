@@ -20,7 +20,7 @@ class Board:
         self.gameMenu = GameMenu(master, "",0,0, self.ResetGame)
 
         self.BoardUi = Frame(self.master,borderwidth=2, background="#080808")
-        self.BoardUi.pack()
+        self.BoardUi.place(x=75, y=140)
         self.DrawBackgroundBoard()
 
         # init the board
@@ -226,7 +226,7 @@ def center(win):
 
 root = Tk()
 root.configure(background='#f0e5df')
-root.geometry("700x700")
+root.geometry("750x780")
 boarda = Board(root)
 center(root)
 root.mainloop()

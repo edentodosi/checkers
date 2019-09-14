@@ -1,16 +1,22 @@
-from Tkinter import Label, Button
+from Tkinter import Label, Button, Frame
 
 class GameMenu:
     def __init__(self, master,playerTurn, blackSoliderCount, whiteSoilderCount, resetGame):
-        self.whitePlayerCount = Label(master, text="White Solider: " + str(whiteSoilderCount))
-        self.blackPlayerCount = Label(master, text="Black Solider: " + str(whiteSoilderCount))
-        self.currentPlayerTurn = Label(master, text="Current Player: " + str(playerTurn))
+        
+        self.resetButton = Button(master, text="Reset Game",command=resetGame, pady=8,relief="groove")
+        self.resetButton.pack(fill="x")
 
-        self.whitePlayerCount.pack()
-        self.blackPlayerCount.pack()
-        self.currentPlayerTurn.pack()
-        self.resetButton = Button(master, text="Reset Game",command=resetGame, height=2, width=15)
-        self.resetButton.pack()
+        self.contianerFrame = Frame(master)
+        self.contianerFrame.pack(fill="x")
+
+        self.whitePlayerCount = Label(self.contianerFrame, text="White Solider: " + str(whiteSoilderCount), background="white", pady=8, width=50,relief="groove")
+        self.blackPlayerCount = Label(self.contianerFrame, text="Black Solider: " + str(whiteSoilderCount), background="black", pady=8, fg="white", width=50,relief="groove")
+        self.currentPlayerTurn = Label(self.contianerFrame, text="Current Player: " + str(playerTurn), pady=8, relief="groove")
+        
+        self.currentPlayerTurn.pack(fill="x")
+
+        self.whitePlayerCount.pack(side="left", fill ="x")
+        self.blackPlayerCount.pack(side="left", fill="x")
 
     
     def UpdateBlackSoliderCounter(self, numOfSoliders):
@@ -21,3 +27,6 @@ class GameMenu:
     
     def UpdatePlayerTurn(self, currentPlayer):
         self.currentPlayerTurn['text'] = "Current Player: " + str(currentPlayer)
+        self.currentPlayerTurn['background'] = currentPlayer
+        self.currentPlayerTurn['fg'] = "black" if currentPlayer == "white" else "white"
+
