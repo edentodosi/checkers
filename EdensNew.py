@@ -14,8 +14,6 @@ class Board:
         self.SizeOfCell = (int)(self.BoardPixelSize / self.NumberOfCellsInAxis)
         self.UiAdvancedOptions = []
         self.lastSoliderClicked = None
-        self.InAMiddleOfEating=False
-        self.someoneWin=False
 
         self.gameMenu = GameMenu(master, "",0,0, self.ResetGame)
 
@@ -27,7 +25,7 @@ class Board:
         self.BoardState = [[None for i in range(
             self.NumberOfCellsInAxis)] for j in range(self.NumberOfCellsInAxis)]
         self.ResetGame()
-
+      
     def DrawBackgroundBoard(self):
         self.background = []
         self.whiteBg = PhotoImage(file="Assets/whitebg.gif")
@@ -52,6 +50,7 @@ class Board:
         self.UiAdvancedOptions = []
         self.InAMiddleOfEating=False
         self.someoneWin=False
+        self.justEat=False
 
         for i in range(self.NumberOfCellsInAxis):
             for j in range(self.NumberOfCellsInAxis):
@@ -79,12 +78,9 @@ class Board:
         self.gameMenu.UpdatePlayerTurn(self.playerTurn)
 
     def OnSoliderPressed(self, solider):
-        if(self.playerTurn != solider.Color):
+        if(self.playerTurn != solider.Color or self.someoneWin):
             return
-        if (self.InAMiddleOfEating):
-            if(solider != self.lastSoliderClicked):
-                return
-        if(self.someoneWin):
+        if (self.InAMiddleOfEating and solider != self.lastSoliderClicked):
             return
 
         for option in self.UiAdvancedOptions:
@@ -95,7 +91,7 @@ class Board:
         advancedPositions = self.GetAdvancedPositionsForSolider(solider)
         
         for newPosition in advancedPositions:
-            if(self.InAMiddleOfEating):
+            if(self.InAMiddleOfEating or self.justEat):
                 if(abs(newPosition.Row - self.lastSoliderClicked.Position.Row) == 2):
                     self.UiAdvancedOptions.append(AdvanceOption(self.BoardUi, newPosition, self.OnPositionOptionPress))
             else:
@@ -142,15 +138,22 @@ class Board:
             return None
 
     def CheckIfNotMovesLeft(self):
+        noMoves =True
         for i in range(self.NumberOfCellsInAxis):
             for j in range(self.NumberOfCellsInAxis):
                 if(self.BoardState[i][j] is not None):
                     if(self.BoardState[i][j].Color== self.playerTurn):
                         advancedOptions = self.GetAdvancedPositionsForSolider(
                             self.BoardState[i][j])
-                        if(len(advancedOptions)!=0):
-                            return False
-        return True
+                        if(len(advancedOptions) >0):
+                            noMoves = False
+                        for option in advancedOptions:
+                            # can we eat again ?
+                            if(abs(option.Row - self.BoardState[i][j].Position.Row) == 2):
+                                self.justEat=True
+                                return False
+                        
+        return noMoves
 
 
     def OnPositionOptionPress(self, position):
@@ -192,6 +195,7 @@ class Board:
       
         self.playerTurn = "black" if self.playerTurn == "white" else "white"
         self.InAMiddleOfEating=False
+        self.justEat=False
       
         if(self.CheckIfNotMovesLeft()):
             self.Winning("black" if self.playerTurn == "white" else "white")
@@ -245,6 +249,3 @@ root.geometry("750x780")
 boarda = Board(root)
 center(root)
 root.mainloop()
-# TODO:
-# if didnt eat while it can - shouled we remove the one couled eat ?  - or do not allow not eating
-# if someone cant move anymore ?
